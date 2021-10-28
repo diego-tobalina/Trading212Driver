@@ -130,28 +130,28 @@ class Trading212Controller {
     }
 
     private initSelenium() {
-        const webdriver = require('selenium-webdriver');
-        const chrome = require('selenium-webdriver/chrome');
-        const By = webdriver.By;
-        const until = webdriver.until;
-        const screen = {
-            width: 1920,
-            height: 1080
-        };
-        const options = new chrome.Options().windowSize(screen);
-        options.setChromeBinaryPath(process.env.GOOGLE_CHROME_BIN)
-        options.addArguments('--headless'); // note: without dashes
-        options.addArguments('--disable-gpu')
-        options.addArguments('--no-sandbox');
 
-        const service = new chrome.ServiceBuilder(process.env.CHROME_EXECUTABLE_PATH).build();
-        chrome.setDefaultService(service);
-        const driver = new webdriver.Builder()
+        const webdriver = require('selenium-webdriver');
+        require('chromedriver');
+        const chrome = require('selenium-webdriver/chrome');
+
+        let options = new chrome.Options();
+        options.setChromeBinaryPath(process.env.CHROME_BINARY_PATH);
+        let serviceBuilder = new chrome.ServiceBuilder(process.env.CHROME_DRIVER_PATH);
+
+        //Don't forget to add these for heroku
+        options.addArguments("--headless");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+
+        let driver = new webdriver.Builder()
             .forBrowser('chrome')
-            .withCapabilities(webdriver.Capabilities.chrome())
-            .setChromeOptions(options)                         // note this
+            .setChromeOptions(options)
+            .setChromeService(serviceBuilder)
             .build();
 
+        const By = webdriver.By;
+        const until = webdriver.until;
         return [By, driver, until]
     }
 
