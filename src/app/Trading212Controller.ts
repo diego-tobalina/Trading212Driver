@@ -55,11 +55,11 @@ class Trading212Controller {
 
             new Promise(async () => {
                 if (this.working) return;
-                while (this.queue.length > 0) {
-                    this.working = true;
-                    const current = this.queue.pop();
-                    const [By, driver, until] = this.initSelenium();
-                    try {
+                this.working = true;
+                try {
+                    while (this.queue.length > 0) {
+                        const current = this.queue.pop();
+                        const [By, driver, until] = this.initSelenium();
                         switch (current.order) {
                             case "BUY": {
                                 await this.buyAsset(current.asset, this.EMAIL, this.PASSWORD, driver, By, until);
@@ -71,12 +71,13 @@ class Trading212Controller {
                                 break;
                             }
                         }
-                    } catch (err) {
-                        console.log("Catch error:", err)
+                        await driver.quit();
+                        this.working = false;
                     }
-                    await driver.quit();
-                    this.working = false;
+                } catch (err) {
+                    console.log("catch error: ", err)
                 }
+                this.working = false;
             })
         } catch (e) {
             next(e);
