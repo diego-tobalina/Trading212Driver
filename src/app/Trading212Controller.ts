@@ -76,6 +76,7 @@ class Trading212Controller {
                                 }
                             }
                         } catch (err) {
+                            console.log("Internal error: ", err)
                             await driver.quit();
                         }
                     }
