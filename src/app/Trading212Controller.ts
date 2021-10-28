@@ -1,5 +1,9 @@
 import {Request, Response, Router} from 'express';
 
+
+let queue = []
+let working = false;
+
 class Trading212Controller {
 
     private router = Router();
@@ -17,8 +21,6 @@ class Trading212Controller {
         this.router.post(`/trading212`, this.event)
     }
 
-    private queue = []
-    private working = false;
     event = async (req: Request, res: Response, next) => {
         try {
 
@@ -45,39 +47,43 @@ class Trading212Controller {
                 strategy
             })
 
-            this.queue.push({
+            queue.push({
                 asset,
                 order,
             })
-
+            console.log("Added to queue, actually there are: " + queue.length)
             res.json({status: 'ok'})
             next();
 
             new Promise(async () => {
-                if (this.working) return;
-                this.working = true;
+                if (working) return;
+                working = true;
                 try {
-                    while (this.queue.length > 0) {
-                        const current = this.queue.pop();
+                    while (queue.length > 0) {
+                        console.log("Remaining in queue: ", queue.length)
+                        const current = queue.pop();
                         const [By, driver, until] = this.initSelenium();
-                        switch (current.order) {
-                            case "BUY": {
-                                await this.buyAsset(current.asset, this.EMAIL, this.PASSWORD, driver, By, until);
-                                break;
+                        try {
+                            switch (current.order) {
+                                case "BUY": {
+                                    await this.buyAsset(current.asset, this.EMAIL, this.PASSWORD, driver, By, until);
+                                    break;
+                                }
+                                case "SELL":
+                                case "STOP": {
+                                    await this.sellAsset(current.asset, this.EMAIL, this.PASSWORD, driver, By, until);
+                                    break;
+                                }
                             }
-                            case "SELL":
-                            case "STOP": {
-                                await this.sellAsset(current.asset, this.EMAIL, this.PASSWORD, driver, By, until);
-                                break;
-                            }
+                        } catch (err) {
+                            await driver.quit();
                         }
-                        await driver.quit();
-                        this.working = false;
                     }
+                    console.log("Remaining in queue: ", queue.length)
                 } catch (err) {
                     console.log("catch error: ", err)
                 }
-                this.working = false;
+                working = false;
             })
         } catch (e) {
             next(e);
@@ -123,19 +129,24 @@ class Trading212Controller {
     }
 
     private initSelenium() {
+        const webdriver = require('selenium-webdriver');
         const chrome = require('selenium-webdriver/chrome');
-        const firefox = require('selenium-webdriver/firefox');
-        const {Builder, By, Key, until} = require('selenium-webdriver');
-
+        const By = webdriver.By;
+        const until = webdriver.until;
         const screen = {
             width: 1920,
             height: 1080
         };
-
-        let driver = new Builder()
+        const options = new chrome.Options().windowSize(screen);
+        options.addArguments('headless'); // note: without dashes
+        options.addArguments('disable-gpu')
+        const path = require('chromedriver').path;
+        const service = new chrome.ServiceBuilder(path).build();
+        chrome.setDefaultService(service);
+        const driver = new webdriver.Builder()
             .forBrowser('chrome')
-            .setChromeOptions(new chrome.Options().headless().windowSize(screen))
-            .setFirefoxOptions(new firefox.Options().headless().windowSize(screen))
+            .withCapabilities(webdriver.Capabilities.chrome())
+            .setChromeOptions(options)                         // note this
             .build();
 
         return [By, driver, until]
