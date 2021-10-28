@@ -122,16 +122,19 @@ class Trading212Controller {
     }
 
     private initSelenium() {
-        const webdriver = require('selenium-webdriver');
-        const {By} = require('selenium-webdriver');
         const chrome = require('selenium-webdriver/chrome');
-        const chromedriver = require('chromedriver');
-        const until = webdriver.until;
+        const firefox = require('selenium-webdriver/firefox');
+        const {Builder, By, Key, until} = require('selenium-webdriver');
 
-        chrome.setDefaultService(new chrome.ServiceBuilder(chromedriver.path).build());
+        const screen = {
+            width: 1920,
+            height: 1080
+        };
 
-        const driver = new webdriver.Builder()
-            .withCapabilities(webdriver.Capabilities.chrome())
+        let driver = new Builder()
+            .forBrowser('chrome')
+            .setChromeOptions(new chrome.Options().headless().windowSize(screen))
+            .setFirefoxOptions(new firefox.Options().headless().windowSize(screen))
             .build();
 
         return [By, driver, until]
