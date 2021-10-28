@@ -76,7 +76,6 @@ class Trading212Controller {
                                 }
                             }
                         } catch (err) {
-                            console.log("Selenium error:" + err)
                             await driver.quit();
                         }
                     }
@@ -139,13 +138,12 @@ class Trading212Controller {
             height: 1080
         };
         const options = new chrome.Options().windowSize(screen);
-        options.setChromeBinaryPath(process.env.CHROME_BINARY_PATH);
+        options.setChromeBinaryPath(process.env.GOOGLE_CHROME_BIN)
         options.addArguments('headless'); // note: without dashes
         options.addArguments('disable-gpu')
         options.addArguments('--no-sandbox');
 
-        const path = require('chromedriver').path;
-        const service = new chrome.ServiceBuilder(path).build();
+        const service = new chrome.ServiceBuilder(process.env.CHROME_EXECUTABLE_PATH).build();
         chrome.setDefaultService(service);
         const driver = new webdriver.Builder()
             .forBrowser('chrome')
