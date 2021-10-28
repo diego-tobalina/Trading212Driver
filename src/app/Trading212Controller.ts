@@ -139,8 +139,8 @@ class Trading212Controller {
         };
         const options = new chrome.Options().windowSize(screen);
         options.setChromeBinaryPath(process.env.GOOGLE_CHROME_BIN)
-        options.addArguments('headless'); // note: without dashes
-        options.addArguments('disable-gpu')
+        options.addArguments('--headless'); // note: without dashes
+        options.addArguments('--disable-gpu')
         options.addArguments('--no-sandbox');
 
         const service = new chrome.ServiceBuilder(process.env.CHROME_EXECUTABLE_PATH).build();
