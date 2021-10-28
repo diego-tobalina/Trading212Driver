@@ -1,0 +1,40 @@
+{
+  "name": "Trading212Driver",
+  "description": "App que usa selenium para controlar trading212",
+  "keywords": [
+    "nodejs"
+  ],
+  "website": "",
+  "repository": "https://github.com/xBidi/Trading212Driver",
+  "logo": "",
+  "success_url": "",
+  "scripts": {},
+  "env": {},
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "image": "heroku/nodejs",
+  "addons": [
+    {
+      "plan": "librato:development",
+      "as": "LIBRATO"
+    },
+    {
+      "plan": "papertrail:choklad",
+      "as": "PAPERTRAIL"
+    }
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-nodejs"
+    }
+  ],
+  "environments": {
+    "dev": {},
+    "pre": {},
+    "pro": {}
+  }
+}
