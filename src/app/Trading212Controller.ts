@@ -93,13 +93,13 @@ class Trading212Controller {
 
     private async buyAsset(asset, email, password, driver, By, until) {
         await this.login(email, password, driver, By, until);
-        const searchInput = await this.getElement(By.className("css-115fr6g search-input"), driver, until)
+        const searchInput = await this.getElement(By.css("#app > div.layout.invest.real.equity.active-tab-search.normal-mode > div.main > div.content > div > div.search-body > div.search-input-wrapper.search-input > input"), driver, until)
         searchInput.sendKeys(asset)
         await this.click(By.css("#app > div.layout.invest.real.equity.active-tab-search.normal-mode > div.main > div.content > div > div.search-body > div.search-results > div.search-results-content > div > div > div:nth-child(1) > div > div > div:nth-child(1) > div"), driver, until)
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.css-u0d0cr.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span"), driver, until)
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.css-1fbss72.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.invest-by-dropdown-container > div > div > div.svg-icon-holder.arrow.css-bc7kpr"), driver, until)
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.css-cdrhz6.dropdown-animation-enter-done > div > div > div > div:nth-child(1)"), driver, until)
-        const valorElement = await this.getElement(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.css-1fbss72.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.order-dialog-input > div.css-6h1z5e.formatted-number-input.center > div.css-fdte1f.input-wrapper > input"), driver, until)
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span"), driver, until)
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.invest-by-dropdown-container > div > div > div:nth-child(2)"), driver, until)
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.dropdown-animation-enter-done > div > div > div > div:nth-child(1)"), driver, until)
+        const valorElement = await this.getElement(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.order-dialog-input > div.formatted-number-input.center > div.input-wrapper > input"), driver, until)
         await valorElement.sendKeys(this.AMOUNT_PER_TRANSACTION)
         await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.button.accent-button"), driver, until)
         await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-review-order-popup.scale > div.popup-container.review-order-popup.popup-animation-enter-done > div.popup-content > div > div.body > div.button.accent-button"), driver, until)
@@ -108,32 +108,43 @@ class Trading212Controller {
     private async sellAsset(asset, email, password, driver, By, until) {
         await this.login(email, password, driver, By, until);
 
-        const searchInput = await this.getElement(By.className("css-115fr6g search-input"), driver, until)
+        const searchInput = await this.getElement(By.css("#app > div.layout.invest.real.equity.active-tab-search.normal-mode > div.main > div.content > div > div.search-body > div.search-input-wrapper.search-input > input"), driver, until)
         searchInput.sendKeys(asset)
         await this.click(By.css("#app > div.layout.invest.real.equity.active-tab-search.normal-mode > div.main > div.content > div > div.search-body > div.search-results > div.search-results-content > div > div > div:nth-child(1) > div > div > div:nth-child(1) > div"), driver, until)
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.css-u0d0cr.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span"), driver, until)
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span"), driver, until)
         await this.sleep(1000)
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.css-1fbss72.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.css-1g6fh6r.horizontal-slider-wrapper > div.svg-icon-holder.arrow.css-bc7kpr.left-arrow.css-hvr4w1"), driver, until)
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div:nth-child(1)"), driver, until)
         await this.sleep(1000)
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.css-1fbss72.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.css-1g6fh6r.horizontal-slider-wrapper > div.svg-icon-holder.arrow.css-bc7kpr.right-arrow.css-w4yt40"), driver, until)
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.css-1fbss72.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.css-1g6fh6r.horizontal-slider-wrapper > div.svg-icon-holder.arrow.css-bc7kpr.right-arrow.css-w4yt40"), driver, until)
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.css-1fbss72.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.css-1g6fh6r.horizontal-slider-wrapper > div.svg-icon-holder.arrow.css-bc7kpr.right-arrow.css-w4yt40"), driver, until)
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.css-1fbss72.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.css-1g6fh6r.horizontal-slider-wrapper > div.svg-icon-holder.arrow.css-bc7kpr.right-arrow.css-w4yt40"), driver, until)
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div:nth-child(3)"), driver, until)
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div:nth-child(3)"), driver, until)
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div:nth-child(3)"), driver, until)
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div:nth-child(3)"), driver, until)
         await this.sleep(1000)
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.css-1fbss72.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.css-1g6fh6r.horizontal-slider-wrapper > div.svg-icon-holder.arrow.css-bc7kpr.right-arrow.css-w4yt40"), driver, until)
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.css-1fbss72.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.css-1g6fh6r.horizontal-slider-wrapper > div.svg-icon-holder.arrow.css-bc7kpr.right-arrow.css-w4yt40"), driver, until)
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.css-1fbss72.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.css-1g6fh6r.horizontal-slider-wrapper > div.svg-icon-holder.arrow.css-bc7kpr.right-arrow.css-w4yt40"), driver, until)
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.css-1fbss72.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.css-1g6fh6r.horizontal-slider-wrapper > div.svg-icon-holder.arrow.css-bc7kpr.right-arrow.css-w4yt40"), driver, until)
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div:nth-child(3)"), driver, until)
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div:nth-child(3)"), driver, until)
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div:nth-child(3)"), driver, until)
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div:nth-child(3)"), driver, until)
         await this.sleep(1000)
         await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.button.accent-button"), driver, until)
         await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-review-order-popup.scale > div.popup-container.review-order-popup.popup-animation-enter-done > div.popup-content > div > div.body > div.button.accent-button"), driver, until)
     }
 
     private initSelenium() {
-
         const webdriver = require('selenium-webdriver');
+        const By = webdriver.By;
+        const until = webdriver.until;
         require('chromedriver');
         const chrome = require('selenium-webdriver/chrome');
+
+        const local = false;
+        if (local) {
+            const chromedriver = require('chromedriver');
+            chrome.setDefaultService(new chrome.ServiceBuilder(chromedriver.path).build());
+            const driver = new webdriver.Builder()
+                .withCapabilities(webdriver.Capabilities.chrome())
+                .build();
+            return [By, driver, until]
+        }
 
         let options = new chrome.Options();
         options.setChromeBinaryPath(process.env.CHROME_BINARY_PATH);
@@ -150,8 +161,6 @@ class Trading212Controller {
             .setChromeService(serviceBuilder)
             .build();
 
-        const By = webdriver.By;
-        const until = webdriver.until;
         return [By, driver, until]
     }
 
