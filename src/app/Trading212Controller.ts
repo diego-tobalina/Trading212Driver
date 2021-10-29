@@ -77,7 +77,7 @@ class Trading212Controller {
                             }
                         } catch (err) {
                             console.log("Internal error: ", err)
-                            await driver.quit();
+                            await driver.close();
                         }
                     }
                     console.log("Remaining in queue: ", queue.length)
