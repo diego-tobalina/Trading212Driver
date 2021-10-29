@@ -146,7 +146,7 @@ class Trading212Controller {
             return [By, driver, until]
         }
 
-        let options = new chrome.Options();
+        let options = new chrome.Options().windowSize({width: 1920, height: 1080});
         options.setChromeBinaryPath(process.env.CHROME_BINARY_PATH);
         let serviceBuilder = new chrome.ServiceBuilder(process.env.CHROME_DRIVER_PATH);
 
