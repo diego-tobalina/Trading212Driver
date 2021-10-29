@@ -1,6 +1,26 @@
 import {Request, Response, Router} from 'express';
 
 
+const chrome = require('selenium-webdriver/chrome');
+const webdriver = require('selenium-webdriver');
+const By = webdriver.By;
+const until = webdriver.until;
+
+let options = new chrome.Options().windowSize({width: 1920, height: 1080});
+options.setChromeBinaryPath(process.env.CHROME_BINARY_PATH);
+let serviceBuilder = new chrome.ServiceBuilder(process.env.CHROME_DRIVER_PATH);
+
+options.addArguments("--headless");
+options.addArguments("--disable-gpu");
+options.addArguments("--no-sandbox");
+
+const driver = new webdriver.Builder()
+    .forBrowser('chrome')
+    .setChromeOptions(options)
+    .setChromeService(serviceBuilder)
+    .build();
+
+
 let queue = []
 let working = false;
 
@@ -62,7 +82,6 @@ class Trading212Controller {
                     while (queue.length > 0) {
                         console.log("Remaining in queue: ", queue.length)
                         const current = queue.pop();
-                        const [By, driver, until] = this.initSelenium();
                         try {
                             switch (current.order) {
                                 case "BUY": {
@@ -125,40 +144,6 @@ class Trading212Controller {
         await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-review-order-popup.scale > div.popup-container.review-order-popup.popup-animation-enter-done > div.popup-content > div > div.body > div.button.accent-button"), driver, until)
     }
 
-    private initSelenium() {
-        const webdriver = require('selenium-webdriver');
-        const By = webdriver.By;
-        const until = webdriver.until;
-        require('chromedriver');
-        const chrome = require('selenium-webdriver/chrome');
-
-        const local = false;
-        if (local) {
-            const chromedriver = require('chromedriver');
-            chrome.setDefaultService(new chrome.ServiceBuilder(chromedriver.path).build());
-            const driver = new webdriver.Builder()
-                .withCapabilities(webdriver.Capabilities.chrome())
-                .build();
-            return [By, driver, until]
-        }
-
-        let options = new chrome.Options().windowSize({width: 1920, height: 1080});
-        options.setChromeBinaryPath(process.env.CHROME_BINARY_PATH);
-        let serviceBuilder = new chrome.ServiceBuilder(process.env.CHROME_DRIVER_PATH);
-
-        //Don't forget to add these for heroku
-        options.addArguments("--headless");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-
-        let driver = new webdriver.Builder()
-            .forBrowser('chrome')
-            .setChromeOptions(options)
-            .setChromeService(serviceBuilder)
-            .build();
-
-        return [By, driver, until]
-    }
 
     private async login(email, password, driver, By, until) {
         driver.get('https://live.trading212.com');
