@@ -6,8 +6,8 @@ const webdriver = require('selenium-webdriver');
 const By = webdriver.By;
 const until = webdriver.until;
 
-
 /*
+
 
 const chromedriver = require('chromedriver');
 chrome.setDefaultService(new chrome.ServiceBuilder(chromedriver.path).build());
@@ -31,7 +31,6 @@ const driver = new webdriver.Builder()
     .setChromeOptions(options)
     .setChromeService(serviceBuilder)
     .build();
-
 
 let queue = []
 let working = false;
@@ -93,7 +92,7 @@ class Trading212Controller {
                 try {
                     while (queue.length > 0) {
                         console.log("Remaining in queue: ", queue.length)
-                        const current = queue.pop();
+                        const current = queue.shift();
                         try {
                             switch (current.order) {
                                 case "BUY": {
@@ -131,7 +130,7 @@ class Trading212Controller {
         try {
             await this.click(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span:nth-child(2)"))
         } catch (err) {
-            await this.click(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span:nth-child(1)"))
+            await this.click(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span"))
         }
         await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.invest-by-dropdown-container > div > div > div:nth-child(2)"))
         await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.dropdown-animation-enter-done > div > div > div > div:nth-child(1)"))
@@ -148,13 +147,13 @@ class Trading212Controller {
         await searchInput.sendKeys(asset)
         await this.sleep(5000)
         await this.click(By.css("#app > div.layout.invest.real.equity.active-tab-search.normal-mode > div.main > div.content > div > div.search-body > div.search-results > div.search-results-content > div > div > div:nth-child(1) > div > div > div:nth-child(1) > div"))
-        await this.click(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span"))
         try {
-            await this.getElement(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div:nth-child(2)"))
+            await this.getElement(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span:nth-child(2)"))
         } catch (err) {
             console.log("No tienes de este asset");
             return;
         }
+        await this.click(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span"))
         const slider = await this.getElement(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div.horizontal-slider > div.slider-bullet"))
         const rightArrow = await this.getElement(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div:nth-child(3)"))
         await driver.actions().dragAndDrop(slider, rightArrow).perform();
