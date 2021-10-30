@@ -7,17 +7,17 @@ const By = webdriver.By;
 const until = webdriver.until;
 
 /*
-
+// PARA DESARROLLAR EN LOCAL CAMBIAR EL DRIVER DE HEROKU POR ESTE
 
 const chromedriver = require('chromedriver');
 chrome.setDefaultService(new chrome.ServiceBuilder(chromedriver.path).build());
 const driver = new webdriver.Builder()
     .withCapabilities(webdriver.Capabilities.chrome())
     .build();
-
  */
 
 
+// DRIVER SIN INTERFAZ GRÁFICA PARA HEROKU
 let options = new chrome.Options().windowSize({width: 1920, height: 1080});
 options.setChromeBinaryPath(process.env.CHROME_BINARY_PATH);
 let serviceBuilder = new chrome.ServiceBuilder(process.env.CHROME_DRIVER_PATH);
@@ -32,6 +32,7 @@ const driver = new webdriver.Builder()
     .setChromeService(serviceBuilder)
     .build();
 
+// sistema de colas para las peticiones
 let queue = []
 let working = false;
 
@@ -78,6 +79,7 @@ class Trading212Controller {
                 strategy
             })
 
+            // lo añade al sistema de colas
             queue.push({
                 asset,
                 order,
@@ -86,37 +88,45 @@ class Trading212Controller {
             res.json({status: 'ok'})
             next();
 
+            // comienza con la petición
             new Promise(async () => {
+                // comprobación si ya hay un proceso consumiendo de las colas
                 if (working) return;
                 working = true;
                 try {
+                    // intenta procesar cada elemento de la cola hasta que no quede ninguno
                     while (queue.length > 0) {
                         console.log("Remaining in queue: ", queue.length)
                         const current = queue.shift();
-                        try {
-                            switch (current.order) {
-                                case "BUY": {
-                                    await this.buyAsset(current.asset, this.EMAIL, this.PASSWORD);
-                                    break;
-                                }
-                                case "SELL":
-                                case "STOP": {
-                                    await this.sellAsset(current.asset, this.EMAIL, this.PASSWORD);
-                                    break;
-                                }
-                            }
-                        } catch (err) {
-                            console.log("Internal error: ", err)
-                        }
+                        await this.processEvent(current)
                     }
                     console.log("Remaining in queue: ", queue.length)
                 } catch (err) {
                     console.log("catch error: ", err)
                 }
+                // indica que ha terminado con la cola y puede iniciarse un nuevo proceso
                 working = false;
             })
         } catch (e) {
             next(e);
+        }
+    }
+
+    private async processEvent(current) {
+        try {
+            switch (current.order) {
+                case "BUY": {
+                    await this.buyAsset(current.asset, this.EMAIL, this.PASSWORD);
+                    break;
+                }
+                case "SELL":
+                case "STOP": {
+                    await this.sellAsset(current.asset, this.EMAIL, this.PASSWORD);
+                    break;
+                }
+            }
+        } catch (err) {
+            console.log("Internal error: ", err)
         }
     }
 
@@ -127,11 +137,14 @@ class Trading212Controller {
         await searchInput.sendKeys(asset)
         await this.sleep(5000)
         await this.click(By.css("#app > div.layout.invest.real.equity.active-tab-search.normal-mode > div.main > div.content > div > div.search-body > div.search-results > div.search-results-content > div > div > div:nth-child(1) > div > div > div:nth-child(1) > div"))
+
+        // intenta seleccionar el botón de compra, si tiene del asset tiene por delante el botón de venta, si no tiene el de compra
         try {
             await this.click(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span:nth-child(2)"))
         } catch (err) {
             await this.click(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span"))
         }
+
         await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.invest-by-dropdown-container > div > div > div:nth-child(2)"))
         await this.click(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.dropdown-animation-enter-done > div > div > div > div:nth-child(1)"))
         const valorElement = await this.getElement(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.order-dialog-input > div.formatted-number-input.center > div.input-wrapper > input"))
@@ -147,12 +160,15 @@ class Trading212Controller {
         await searchInput.sendKeys(asset)
         await this.sleep(5000)
         await this.click(By.css("#app > div.layout.invest.real.equity.active-tab-search.normal-mode > div.main > div.content > div > div.search-body > div.search-results > div.search-results-content > div > div > div:nth-child(1) > div > div > div:nth-child(1) > div"))
+
+        // comprobación para saber si puede realizar ventas (tienes del stock en cartera y está visible el botón de venta)
         try {
             await this.getElement(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span:nth-child(2)"))
         } catch (err) {
             console.log("No tienes de este asset");
             return;
         }
+
         await this.click(By.css("#app > div.popup-wrapper.popup-opened.active-popup-instrument-advanced-popup.slide-up > div > div.popup-content > div > div > div.scrollable-area > div > div.invest-instrument-advanced-header > div:nth-child(2) > div.trading-buttons > span"))
         const slider = await this.getElement(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div.horizontal-slider > div.slider-bullet"))
         const rightArrow = await this.getElement(By.css("#app > div.popup-wrapper.popup-opened.delay.active-popup-new-order-popup.scale > div.popup-container.new-order-popup.popup-animation-enter-done > div.popup-content > div > div.scrollable-area-wrapper.bottom.with-height-transition > div > div > div.horizontal-slider-wrapper > div:nth-child(3)"))
